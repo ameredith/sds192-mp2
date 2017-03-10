@@ -16,4 +16,7 @@ load("contributions.rda")
 ```
 
 
-#Next Header
+## Sorting the data
+
+
+## Creating the graph

@@ -20,3 +20,5 @@ load("contributions.rda")
 
 
 ## Creating the graph
+
+## Summarize the results

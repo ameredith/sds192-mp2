@@ -15,10 +15,18 @@ load("committees.rda")
 load("contributions.rda")
 ```
 
-
 ## Sorting the data
+```{r}
 
+```
 
 ## Creating the graph
+```{r}
+
+```
 
 ## Summarize the results
+```{r}
+
+```
+

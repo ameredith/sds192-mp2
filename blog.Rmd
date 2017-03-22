@@ -36,7 +36,9 @@ joined <- x %>% inner_join(House,  by = "fec_id")
 joined
 ```
 - What are we graphing?
-
+Based on party (REP or DEM), whether candidates that were in office stayed in office
+So if incumbent == true, that means they were running for re-election,
+and ge_winner indicates N or W, where W == won.
 
 ## Creating the graph
 ```{r}

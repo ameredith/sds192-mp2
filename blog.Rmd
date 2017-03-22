@@ -1,6 +1,6 @@
 ---
 title: "Mini-Project 2"
-author: "Prayasha Chaudhary, Ariana Meredith"
+author: "Anjali Desai, Prayasha Chaudhary, Ariana Meredith"
 date: "March 24, 2017"
 output: html_document
 ---

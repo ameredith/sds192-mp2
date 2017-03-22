@@ -23,6 +23,22 @@ library(dplyr)
 ## Sorting the data
 ```{r}
 
+Cand <- candidates %>%
+  select(cand_id, cand_name, cand_party_affiliation, cand_election_yr)  %>%
+  #filter(cand_party_affiliation == "DEM" ,cand_election_yr >= 2000, cand_election_yr <=2012) %>%
+
+  arrange(cand_election_yr)
+x <- rename(Cand,  fec_id = cand_id)
+
+House <- select(house_elections, fec_id, incumbent)
+
+joined <- x %>% left_join(House,  by = "fec_id")
+joined
+  
+  
+
+
+
 ```
 
 ## Creating the graph

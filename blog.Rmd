@@ -34,16 +34,12 @@ House <- select(house_elections, fec_id, incumbent)
 
 joined <- x %>% inner_join(House,  by = "fec_id")
 joined
-  
-  
-
-
-
 ```
+- What are we graphing?
 
 ## Creating the graph
 ```{r}
-
+ggplot(data = joined, aes(x = , y = )) + geom_line()
 ```
 
 ## Summarize the results

@@ -30,12 +30,13 @@ Cand <- candidates %>%
 
 x <- rename(Cand,  fec_id = cand_id)
 
-House <- select(house_elections, fec_id, incumbent)
+House <- select(house_elections, fec_id, incumbent, ge_winner)
 
 joined <- x %>% inner_join(House,  by = "fec_id")
 joined
 ```
 - What are we graphing?
+
 
 ## Creating the graph
 ```{r}

@@ -21,7 +21,7 @@ library(tidyverse)
 library(ggplot2)
 library(dplyr)
 ```
- - use house_elections data to find the relation between the number of votes given to republican vs. democratic candidates 
+
  
 ## Sorting the data
 ```{r}
@@ -39,14 +39,10 @@ House <- house_elections %>%
 
 x <- rename(Cand,  fec_id = cand_id)
 joined <- x %>% inner_join(House,  by = "fec_id") %>%
-  filter(cand_party_affiliation == c("DEM", "REP"))
+  filter(cand_party_affiliation == "DEM" | cand_party_affiliation == "REP")
 joined
 
 ```
-- What are we graphing?
-Based on party (REP or DEM), whether candidates that were in office stayed in office
-So if incumbent == true, that means they were running for re-election,
-and ge_winner indicates N or W, where W == won.
 
 ## Creating the graph
 ```{r}

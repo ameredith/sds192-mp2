@@ -33,7 +33,7 @@ x <- rename(Cand,  fec_id = cand_id)
 House <- select(house_elections, fec_id, incumbent, ge_winner)
 
 joined <- x %>% inner_join(House,  by = "fec_id")
-joined
+joined 
 ```
 - What are we graphing?
 Based on party (REP or DEM), whether candidates that were in office stayed in office

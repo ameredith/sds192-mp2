@@ -33,9 +33,7 @@ Cand <- candidates %>%
 
 House <- house_elections %>%
   select(fec_id, general_votes, state, candidate_name, party) %>%
-  #filter(party == c("D", "R")) %>%
   filter(state == "ME" |state =="NH" |state == "VT"|state == "MA"|state == "RI"|state == "CT"|state == "NY"| state =="NJ"| state =="PA")
-  #arrange(candidate_name)
 
 x <- rename(Cand,  fec_id = cand_id)
 joined <- x %>% inner_join(House,  by = "fec_id") %>%

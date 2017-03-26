@@ -8,7 +8,6 @@ output: html_document
 ## Loading the data and Libraries 
 
 ```{r, include=FALSE}
-#library(ggplot2)
 library(ggmap)
 library(maps)
 library(mapdata)
@@ -29,15 +28,18 @@ library(dplyr)
 
 Cand <- candidates %>%
   select(cand_id, cand_name, cand_party_affiliation, cand_election_yr)  %>%
-  filter(cand_party_affiliation == c("DEM", "REP"), cand_election_yr == 2012) %>%
-  arrange(cand_election_yr)
-
-x <- rename(Cand,  fec_id = cand_id)
+  filter( cand_election_yr == 2012) %>%
+  arrange(cand_name)
 
 House <- house_elections %>%
-  select(fec_id, general_votes, state) %>%
-  filter(state == c("ME" ,"NH" , "VT", "MA", "RI", "CT", "NY", "NJ", "PA"))
-joined <- x %>% inner_join(House,  by = "fec_id")
+  select(fec_id, general_votes, state, candidate_name, party) 
+  #filter(party == c("D", "R")) %>%
+  #filter(state == c("ME" ,"NH" , "VT", "MA", "RI", "CT", "NY", "NJ", "PA"))
+  #arrange(candidate_name)
+
+x <- rename(Cand,  fec_id = cand_id)
+joined <- x %>% inner_join(House,  by = "fec_id") %>%
+  filter(cand_party_affiliation == c("DEM", "REP"))
 joined
 
 ```

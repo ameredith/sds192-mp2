@@ -5,9 +5,6 @@ date: "March 24, 2017"
 output: html_document
 ---
 
-install.packages(c("ggplot2", "devtools", "dplyr", "stringr"))
-install.packages(c("maps", "mapdata"))
-devtools::install_github("dkahle/ggmap")
 ## Loading the data and Libraries 
 
 ```{r, include=FALSE}
@@ -86,15 +83,3 @@ northEast + geom_polygon(data = joined, aes(fill = cand_party_affiliation), colo
       ditch_the_axes
 ```
 
-
-```{r}
-library(RgoogleMaps)
-library(googleVis)
-G4 <- gvisGeoChart(joined, locationvar='City', colorvar='Popularity',
-                   options=list(region='US', height=350, 
-                                displayMode='markers',
-                                colorAxis="{values:[200,400,600,800],
-                                 colors:[\'red', \'pink\', \'orange',\'green']}")
-) 
-plot(G4)
-```

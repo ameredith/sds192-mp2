@@ -15,12 +15,6 @@ devtools::install_github("dkahle/ggmap")
 library(ggmap)
 library(maps)
 library(mapdata)
-library(XML)
-library(sp)
-library(rgdal)
-library(rgeos)
-
-
 
 load("house_elections.rda")
 load("candidates.rda")
@@ -41,16 +35,16 @@ Cand <- candidates %>%
   filter(cand_party_affiliation == c("DEM", "REP"), cand_election_yr == 2012) %>%
   #filter(cand_party_affiliation == "DEM" ,cand_election_yr >= 2000, cand_election_yr <=2012) %>%
   arrange(cand_election_yr)
-#Cand
+Cand
 
 x <- rename(Cand,  fec_id = cand_id)
 
 House <- house_elections %>%
-  select(fec_id, primary_votes, general_votes, state) %>%
+  select(fec_id, general_votes, state) %>%
   filter(state == c("ME" ,"NH" , "VT", "MA", "RI", "CT", "NY", "NJ", "PA"))
-House
+#House
 joined <- x %>% inner_join(House,  by = "fec_id")
-joined
+#joined
 ```
 - What are we graphing?
 Based on party (REP or DEM), whether candidates that were in office stayed in office
@@ -70,29 +64,37 @@ ggplot(data = joined, aes( x= state, y=primary_votes, fill = cand_party_affiliat
 ```{r}
 ggplot(data = joined, aes( x= state, y=general_votes, fill = cand_party_affiliation))+ geom_bar(stat = "identity")
 ```
-```{r}
 
-myMap <- get_map(location=myLocation, source="google", maptype="roadmap", crop=FALSE)
-ggmap(myMap)
+
+
+
+```{r}
+states <- map_data("state")
+north_east <- subset(states, region %in% c("maine", "new hampshire", "vermont","massachusetts", "rhode island", "connecticut", "new york", "new jersey", "pennsylvania" ))
+ditch_the_axes <- theme(
+  axis.text = element_blank(),
+  axis.line = element_blank(),
+  axis.ticks = element_blank(),
+  panel.border = element_blank(),
+  panel.grid = element_blank(),
+  axis.title = element_blank()
+  )
+
+northEast <- ggplot(data= north_east) + geom_polygon( aes(x=long, y = lat, group= group ), color = "black")+coord_fixed(1.3)
+
+northEast + geom_polygon(data = joined, aes(fill = cand_party_affiliation), color = "white")+ geom_polygon(color = "black", fill = NA) +theme_bw() +
+      ditch_the_axes
 ```
 
 
 ```{r}
-#us_state_map <- map_data('state')
-#map_data <- merge(joined, us_state_map, by = 'region')
-Point_ID <- c(1,2)
-Easting <- c(519769,518250)
-Northing <- c(5767155,5766640)
-df <- data.frame(Point_ID, Easting, Northing)
-myvars <- c("Easting","Northing")
-coords <- df[myvars]
-sp = SpatialPoints(coords)
-spdf = SpatialPointsDataFrame(sp, df)
-proj4string(spdf)=CRS("++proj=utm +zone=30")
-spdf<- spTransform(spdf, CRS("+proj=longlat +datum=WGS84"))
-myLocation <- "Hereford" 
-myMap <- get_map(location = myLocation, zoom=16, maptype= "satellite")
-ggmap(myMap)+
-geom_point(aes(x = Easting, y = Northing), data = as.data.frame(coordinates(spdf)),
-         alpha = .5, color="darkred", size = 3)
+library(RgoogleMaps)
+library(googleVis)
+G4 <- gvisGeoChart(joined, locationvar='City', colorvar='Popularity',
+                   options=list(region='US', height=350, 
+                                displayMode='markers',
+                                colorAxis="{values:[200,400,600,800],
+                                 colors:[\'red', \'pink\', \'orange',\'green']}")
+) 
+plot(G4)
 ```

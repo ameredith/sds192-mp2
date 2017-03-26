@@ -5,10 +5,23 @@ date: "March 24, 2017"
 output: html_document
 ---
 
-
+install.packages(c("ggplot2", "devtools", "dplyr", "stringr"))
+install.packages(c("maps", "mapdata"))
+devtools::install_github("dkahle/ggmap")
 ## Loading the data and Libraries 
 
 ```{r, include=FALSE}
+#library(ggplot2)
+library(ggmap)
+library(maps)
+library(mapdata)
+library(XML)
+library(sp)
+library(rgdal)
+library(rgeos)
+
+
+
 load("house_elections.rda")
 load("candidates.rda")
 load("committees.rda")
@@ -25,13 +38,17 @@ library(dplyr)
 
 Cand <- candidates %>%
   select(cand_id, cand_name, cand_party_affiliation, cand_election_yr)  %>%
+  filter(cand_party_affiliation == c("DEM", "REP"), cand_election_yr == 2012) %>%
   #filter(cand_party_affiliation == "DEM" ,cand_election_yr >= 2000, cand_election_yr <=2012) %>%
   arrange(cand_election_yr)
+#Cand
 
 x <- rename(Cand,  fec_id = cand_id)
 
-House <- select(house_elections, fec_id, incumbent, ge_winner)
-
+House <- house_elections %>%
+  select(fec_id, primary_votes, general_votes, state) %>%
+  filter(state == c("ME" ,"NH" , "VT", "MA", "RI", "CT", "NY", "NJ", "PA"))
+House
 joined <- x %>% inner_join(House,  by = "fec_id")
 joined
 ```
@@ -42,11 +59,40 @@ and ge_winner indicates N or W, where W == won.
 
 ## Creating the graph
 ```{r}
-ggplot(data = joined, aes(x = , y = )) + geom_line()
+ggplot(data = joined, aes( x= state, y=primary_votes, fill = cand_party_affiliation))+ geom_bar(stat = "identity")
+  
+#stat_bin(aes(x=cand_election_yr, color=cand_party_affiliation, group=cand_party_affiliation), geom="line")
+
+#, aes(x=cand_election_yr, y=..count..))+ geom_line(aes(group=cand_party_affiliation))
 ```
 
 ## Summarize the results
 ```{r}
+ggplot(data = joined, aes( x= state, y=general_votes, fill = cand_party_affiliation))+ geom_bar(stat = "identity")
+```
+```{r}
 
+myMap <- get_map(location=myLocation, source="google", maptype="roadmap", crop=FALSE)
+ggmap(myMap)
 ```
 
+
+```{r}
+#us_state_map <- map_data('state')
+#map_data <- merge(joined, us_state_map, by = 'region')
+Point_ID <- c(1,2)
+Easting <- c(519769,518250)
+Northing <- c(5767155,5766640)
+df <- data.frame(Point_ID, Easting, Northing)
+myvars <- c("Easting","Northing")
+coords <- df[myvars]
+sp = SpatialPoints(coords)
+spdf = SpatialPointsDataFrame(sp, df)
+proj4string(spdf)=CRS("++proj=utm +zone=30")
+spdf<- spTransform(spdf, CRS("+proj=longlat +datum=WGS84"))
+myLocation <- "Hereford" 
+myMap <- get_map(location = myLocation, zoom=16, maptype= "satellite")
+ggmap(myMap)+
+geom_point(aes(x = Easting, y = Northing), data = as.data.frame(coordinates(spdf)),
+         alpha = .5, color="darkred", size = 3)
+```

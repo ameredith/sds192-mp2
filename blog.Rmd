@@ -25,15 +25,19 @@ library(dplyr)
 
 Cand <- candidates %>%
   select(cand_id, cand_name, cand_party_affiliation, cand_election_yr)  %>%
+  filter(cand_party_affiliation == c("DEM", "REP"), cand_election_yr == 2012) %>%
   #filter(cand_party_affiliation == "DEM" ,cand_election_yr >= 2000, cand_election_yr <=2012) %>%
   arrange(cand_election_yr)
+#Cand
 
 x <- rename(Cand,  fec_id = cand_id)
 
-House <- select(house_elections, fec_id, incumbent, ge_winner)
-
+House <- house_elections %>%
+  select(fec_id, primary_votes, general_votes, state) %>%
+  filter(state == c("ME" ,"NH" , "VT", "MA", "RI", "CT", "NY", "NJ", "PA"))
+House
 joined <- x %>% inner_join(House,  by = "fec_id")
-joined 
+joined
 ```
 - What are we graphing?
 Based on party (REP or DEM), whether candidates that were in office stayed in office
@@ -42,7 +46,10 @@ and ge_winner indicates N or W, where W == won.
 
 ## Creating the graph
 ```{r}
-ggplot(data = joined, aes(x = , y = )) + geom_line()
+ggplot(data = joined, aes( x= state, y=primary_votes, fill = cand_party_affiliation))+ geom_bar(stat = "identity")
+ggplot(data = joined, aes( x= state, y=general_votes, fill = cand_party_affiliation))+ geom_bar(stat = "identity")
+
+
 ```
 
 ## Summarize the results

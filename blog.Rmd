@@ -5,6 +5,9 @@ date: "March 24, 2017"
 output: html_document
 ---
 
+```{r global_options, include = FALSE}
+knitr::opts_chunk$set(message=FALSE, warning=FALSE, error=FALSE) #hide error messages etc.
+```
 
 ```{r, include=FALSE}
 ##Loading the data and libraries 

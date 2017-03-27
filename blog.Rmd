@@ -1,5 +1,5 @@
 ---
-title: "Mini-Project 2"
+title: "SDS 192 Mini-Project 2"
 author: "Anjali Desai, Prayasha Chaudhary, Ariana Meredith"
 date: "March 24, 2017"
 output: html_document
@@ -8,63 +8,50 @@ output: html_document
 ```{r global_options, include = FALSE}
 knitr::opts_chunk$set(message=FALSE, warning=FALSE, error=FALSE) #hide error messages etc.
 ```
-
+#House elections in the Northeast in 2012
 ```{r, include=FALSE}
 ##Loading the data and libraries 
-
-library(ggmap)
-library(maps)
-library(mapdata)
-
+library(tidyverse)
+library(ggplot2)
+library(dplyr)
 load("house_elections.rda")
 load("candidates.rda")
 load("committees.rda")
 load("contributions.rda")
-
-library(tidyverse)
-library(ggplot2)
-library(dplyr)
 ```
 
- 
-## Sorting the data
+## Data Sorting
 ```{r}
-
 Cand <- candidates %>%
-  select(cand_id, cand_name, cand_party_affiliation, cand_election_yr)  %>%  #selecting the variables we want (id, name, party, year)
-  filter( cand_election_yr == 2012) %>% #filter for just 2012
-  arrange(cand_name)
-
+  select(cand_id, cand_party_affiliation, cand_election_yr)  %>%  #selecting necessary variables (id, party, year)
+  filter( cand_election_yr == 2012) %>% #filter for year 2012
+  arrange(cand_id)
 House <- house_elections %>%
-  select(fec_id, general_votes, state, candidate_name, party) %>% #selecting the variables we want (id, votes, state, name, party)
-  filter(state == "ME" |state =="NH" |state == "VT"|state == "MA"|state == "RI"|state == "CT"|state == "NY"| state =="NJ"| state =="PA") #filtering for northeast states
+  select(fec_id, general_votes, state) %>% #selecting necessary variables we want (id, votes, state)
+  filter(state == "ME" |state =="NH" |state == "VT"|state == "MA"|state == "RI"|state == "CT"|state == "NY"| state =="NJ"| state =="PA") #filtering for Northeastern states
 
-x <- rename(Cand,  fec_id = cand_id) #renaming cand_id to fec_id so the id variable name matches for the join
-
+x <- rename(Cand,  fec_id = cand_id) #renaming cand_id to fec_id so Cand id variable matches House for the join
 joined <- x %>% inner_join(House,  by = "fec_id") %>%
   filter(cand_party_affiliation == "DEM" | cand_party_affiliation == "REP") #filter for democrats or repbulicans only
-
-joined
 
 ```
 
 ## Creating the graph
 ```{r}
-ggplot(data = joined, aes( x= state, y=general_votes, fill = cand_party_affiliation))+ geom_bar(stat = "identity") + labs(x = "Year", y = "General Votes") + scale_fill_manual(values =c("Blue","Red"), name = "Guide", breaks=c("DEM", "REP"))
-
+ggplot(data = joined, aes( x= state, y=general_votes, fill = cand_party_affiliation))+geom_bar(stat= "identity")+labs(x = NULL, y = "General Votes (millions)")+theme(axis.text.x = element_text(angle = 50, hjust = 1, size= 12, face= "bold"), axis.text.y = element_text(size = 12, face= "bold"), axis.title.y = element_text(size = 12))+theme(legend.position=c(.1, .8))+ggtitle("Democrats vs. Republicans in the Northeast")+theme(plot.title = element_text( size = 20, hjust = 0.5, face= "bold"))+ scale_y_continuous(expand = c(0,0), labels = c(0, 2, 4 ,6))+ scale_fill_manual(values =c("blue4","Red"), name = "Party", labels=c("DEM", "REP"))+ scale_x_discrete( labels = c("Connecticut", "Massachusetts" , "Maine", "New Hampshire", "New Jersey", "New York", "Pennysylvania", "Rhode Island", "Vermont"))
 ```
 
-This graph shows states in the Northeast and looks at the general election votes in that state for the house elections of 2012, grouped by the party affiliation (Republican or Democrat) of the candidate that the votes went to.
+The graph represents the 2012 general election votes in the Northeastern region for house elections, grouped by party affiliation (Republican or Democrat) of the candidate that the votes went to.
 
 ## Analyzing the Results
 
-The data shows that Democratic Candidates seems to receive more votes than Republican Candidates do in the Northeast for the House elections. 
+The collected and modified dataset for analyzing "Democrats vs. Republicans in the Northeast" was taken from the Federal Election Commission. Each entry included  state, candidate party affiliation, candidate id, candidate election year and general votes(5 total variables with 305 observations). The dataset did notsort by region (only by state), so we classified the northeast region according to the US Census Bureau as Connecticut, Maine, Massachusetts, New Hampshire, Rhode Island, Vermont, New Jersey, New York,and Pennsylvania. We used a bargraph, with each  bars representing Democrats and Republicans We chose this because we thought it was the best way to show the stark contrast in votes across the United States. The length of the bars indicates the number of voters and the contrasting colors show the differences in party affiliation. We specifically chose those colors to signify the approriate party affiliation of Democrats and Republicans. The data shows Democratic Candidates received more votes than Republican Candidates in the Northeast for the House elections of 2012.
 
-This poll history (http://www.gallup.com/poll/15370/party-affiliation.aspx) shows that Americans seems to historically identify roughly equally as either a Republican or a Democrat. For example, the most recent poll shows that 31% of Americans identify as Republican, and 31% identify as Democrat. If we look back to June 2012, the year of our data, it shows again an equal percentage (30%) of Americans that consider themselves either a Democrat or Republican. 
-
-The third choice in the poll is Independent, and more Americans consistently identify as Independent than one of two other parties, with about 40% of Americans considering themselves Independents.
+This poll history (http://www.gallup.com/poll/15370/party-affiliation.aspx) shows that Americans in the past have  identified roughly equally as either a Republican or a Democrat. For example, the most recent poll shows that 31% of Americans identify as Republican, and 31% identify as Democrat. If we look back to June 2012, the year of our data, it shows again an equal percentage (30%) of Americans that consider themselves either a Democrat or Republican. The third choice in the poll is Independent, and more Americans consistently identify as Independent than one of two other parties, with about 40% of Americans considering themselves Independent.
 
 Since the amount of Americans who consider themselves a Democrat or Republican is roughly equal, one explanation of why Democratic candidates seem to receive more votes than Republican Candidates is because Independent voters tend to vote more for Democratic Candidates than Republican Candidates, and since they represent a large percentage of voters, they can easily influence the proportion of votes. 
+
+
 
 The Northeast is also known to be a more left-leaning region than other areas of the United States, so it is not surprising that our data reveals that Democratic candidates tended to receive more votes in the Northeast. 
 

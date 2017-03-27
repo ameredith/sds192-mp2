@@ -57,6 +57,3 @@ The Northeast is also known to be a more left-leaning region than other areas of
 
 
 The Northeast is also known to be a more left-leaning region than other areas of the United States, so it is not surprising that our data reveals that Democratic candidates tended to receive more votes in the Northeast. 
-
-
->>>>>>> 78b03caedf3b0a87774eb4f764afed73d3e9797e
